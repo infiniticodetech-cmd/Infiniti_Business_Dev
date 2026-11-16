@@ -1,0 +1,132 @@
+{
+  "name": "WF-01 Daily Discovery Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        }
+      },
+      "id": "1",
+      "name": "Daily Schedule (07:00 UTC)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {},
+      "id": "2",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare discovery search candidates across MVP Bots 01-05\n// Queries are targeted at public RFP, tender, and procurement opportunities\nreturn [\n  {\n    json: {\n      bot_id: 1,\n      source_id: 1,\n      query: '\"request for proposal\" OR \"RFP\" \"website redesign\" OR \"web development\" 2026',\n      candidates: [\n        {\n          url: 'https://cityofmetropolis.gov/procurement/rfp-2026-portal-redesign',\n          prompt_hint: 'Municipal portal redesign and accessibility compliance overhaul.'\n        }\n      ]\n    }\n  },\n  {\n    json: {\n      bot_id: 2,\n      source_id: 1,\n      query: '\"RFP\" OR \"tender\" \"mobile app development\" iOS Android 2026',\n      candidates: [\n        {\n          url: 'https://healthconnect-system.org/procurement/mobile-patient-app-rfp',\n          prompt_hint: 'Cross-platform mobile patient care app with HIPAA compliance.'\n        }\n      ]\n    }\n  },\n  {\n    json: {\n      bot_id: 3,\n      source_id: 1,\n      query: '\"seeking proposals\" OR \"RFP\" \"custom software\" OR \"cloud migration\" 2026',\n      candidates: [\n        {\n          url: 'https://logistics-apex-corp.com/vendor-portal/rfp-warehouse-dispatch',\n          prompt_hint: 'Custom logistics warehouse automation and dispatching software.'\n        }\n      ]\n    }\n  },\n  {\n    json: {\n      bot_id: 4,\n      source_id: 1,\n      query: '\"tender\" OR \"RFP\" \"AI solution\" OR \"machine learning integration\" 2026',\n      candidates: [\n        {\n          url: 'https://fintech-global-trust.co.uk/procurement/rfp-fraud-detection-ai',\n          prompt_hint: 'Enterprise AI solution for transaction monitoring and anomaly detection.'\n        }\n      ]\n    }\n  },\n  {\n    json: {\n      bot_id: 5,\n      source_id: 1,\n      query: '\"RFP\" \"workflow automation\" OR \"ERP CRM integration\" 2026',\n      candidates: [\n        {\n          url: 'https://midwest-manufacturing.net/vendor/rfp-workflow-automation',\n          prompt_hint: 'Workflow automation integrating ERP production planning with CRM.'\n        }\n      ]\n    }\n  }\n];"
+      },
+      "id": "3",
+      "name": "Prepare Bot Discovery Batches",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 380]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:3000/api/pipeline/ingest",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-pipeline-key",
+              "value": "={{ $env.PIPELINE_API_KEY || 'infiniti_secret_pipeline_api_key_2026_mvp' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"bot_id\": {{ $json.bot_id }},\n  \"source_id\": {{ $json.source_id }},\n  \"candidates\": {{ JSON.stringify($json.candidates) }},\n  \"dry_run\": false\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "4",
+      "name": "Submit to Pipeline Service",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log summary of run outcomes\nconst items = $input.all();\nconst summary = items.map(item => ({\n  run_id: item.json.run_id,\n  bot_id: item.json.bot_id,\n  status: item.json.status,\n  processed: item.json.processed,\n  published: item.json.published,\n  errors: item.json.errors?.length || 0\n}));\nreturn [{ json: { timestamp: new Date().toISOString(), batch_summary: summary } }];"
+      },
+      "id": "5",
+      "name": "Summarize Run Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 380]
+    }
+  ],
+  "connections": {
+    "Daily Schedule (07:00 UTC)": {
+      "main": [
+        [
+          {
+            "node": "Prepare Bot Discovery Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare Bot Discovery Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Bot Discovery Batches": {
+      "main": [
+        [
+          {
+            "node": "Submit to Pipeline Service",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit to Pipeline Service": {
+      "main": [
+        [
+          {
+            "node": "Summarize Run Metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  }
+}

@@ -24,7 +24,8 @@ export function resolve(task: AITask): { provider: AIProvider; model: string } {
 
   const route = routingMap[task];
   const providerName = route?.provider || env.AI_PROVIDER;
-  const model = route?.model || env.OLLAMA_MODEL;
+  const defaultModel = providerName === 'openai' ? (env.OPENAI_MODEL || 'gpt-4o-mini') : env.OLLAMA_MODEL;
+  const model = route?.model || defaultModel;
 
   const provider = providers[providerName];
   if (!provider) {

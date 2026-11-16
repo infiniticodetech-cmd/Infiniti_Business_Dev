@@ -91,7 +91,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="p-4 border-t border-slate-800 space-y-2">
             <div className="px-3 py-2 bg-slate-800/50 rounded-lg border border-slate-700/60 text-xs">
               <div className="text-slate-400">Stack</div>
-              <div className="font-medium text-slate-200 mt-0.5">Next.js · Supabase · Ollama</div>
+              <div className="font-medium text-slate-200 mt-0.5">Next.js · Supabase · OpenAI</div>
             </div>
             <button
               onClick={handleLogout}

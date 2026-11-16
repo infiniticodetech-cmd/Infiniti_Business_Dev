@@ -66,7 +66,7 @@ export default function SettingsPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">System Health & Configuration</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Monitor infrastructure connectivity, local Ollama model status, and approved service profiles.
+            Monitor OpenAI connectivity, database health, and approved service profiles.
           </p>
         </div>
         <button
@@ -88,7 +88,7 @@ export default function SettingsPage() {
 
       {/* Health Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Local AI / Ollama */}
+        {/* AI Engine */}
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
           <div className="flex items-center justify-between pb-4 border-b border-slate-100">
             <div className="flex items-center space-x-3">
@@ -96,8 +96,10 @@ export default function SettingsPage() {
                 <Cpu className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900 text-sm">Local AI Engine</h3>
-                <div className="text-xs text-slate-400">Ollama Provider</div>
+                <h3 className="font-semibold text-slate-900 text-sm">AI Engine</h3>
+                <div className="text-xs text-slate-400 capitalize">
+                  {health?.services.ai.provider === 'openai' ? 'OpenAI API' : health?.services.ai.provider || 'AI Provider'}
+                </div>
               </div>
             </div>
             {health?.services.ai.healthy ? (
@@ -113,14 +115,14 @@ export default function SettingsPage() {
           <div className="mt-4 space-y-2 text-xs">
             <div className="flex justify-between py-1 border-b border-slate-50">
               <span className="text-slate-500">Configured Model</span>
-              <span className="font-mono font-medium text-slate-700">{health?.services.ai.model || 'qwen2.5:7b-instruct'}</span>
+              <span className="font-mono font-medium text-slate-700">{health?.services.ai.model || 'gpt-4o-mini'}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-slate-50">
               <span className="text-slate-500">Active Provider</span>
-              <span className="font-mono font-medium text-slate-700">{health?.services.ai.provider || 'ollama'}</span>
+              <span className="font-mono font-medium text-slate-700">{health?.services.ai.provider || 'openai'}</span>
             </div>
             <div className="pt-2 text-slate-600 text-[11px] leading-relaxed">
-              {health?.services.ai.detail || 'Start local Ollama server via `ollama serve` to enable real-time local model inference.'}
+              {health?.services.ai.detail || 'Configure OPENAI_API_KEY to enable OpenAI inference.'}
             </div>
           </div>
         </div>

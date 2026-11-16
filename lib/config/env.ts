@@ -2,26 +2,27 @@ import { z } from 'zod';
 
 const envSchema = z.object({
   // Supabase
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url().default('http://127.0.0.1:54321'),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).default('dummy_anon_key_for_testing'),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).default('dummy_service_role_key_for_testing'),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url().default('https://gwgzxdsqrubbjvsbdnix.supabase.co'),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3Z3p4ZHNxcnViYmp2c2Jkbml4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4MTEzODksImV4cCI6MjExMDM4NzM4OX0.Pk46L2tGy4S-M0_D21L4kvVrUYafi-_9QrmFYch4jTM'),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3Z3p4ZHNxcnViYmp2c2Jkbml4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5NDgxMTM4OSwiZXhwIjoyMTEwMzg3Mzg5fQ.AohoABDx6Ud4PkFopJN3ibpWfRfg5sC-Vi8QWQ8KHfA'),
 
   // Pipeline auth
   PIPELINE_API_KEY: z.string().min(16).default('infiniti_secret_pipeline_api_key_2026_mvp'),
 
   // AI Configuration
-  AI_PROVIDER: z.enum(['ollama', 'openai']).default('ollama'),
+  AI_PROVIDER: z.enum(['ollama', 'openai']).default('openai'),
   AI_TASK_ROUTING: z
     .string()
-    .default('{"analyze_opportunity":{"provider":"ollama","model":"qwen2.5:7b-instruct"}}'),
+    .default('{"analyze_opportunity":{"provider":"openai","model":"gpt-4o-mini"}}'),
+  OPENAI_API_KEY: z.string().default(''),
+  OPENAI_MODEL: z.string().default('gpt-4o-mini'),
+  OPENAI_BASE_URL: z.string().url().default('https://api.openai.com/v1'),
+  OPENAI_TIMEOUT_MS: z.coerce.number().default(60000),
+
   OLLAMA_BASE_URL: z.string().url().default('http://localhost:11434'),
   OLLAMA_MODEL: z.string().default('qwen2.5:7b-instruct'),
   OLLAMA_NUM_CTX: z.coerce.number().default(4096),
   OLLAMA_TIMEOUT_MS: z.coerce.number().default(120000),
-
-  // Optional OpenAI (prepared for future)
-  OPENAI_API_KEY: z.string().optional(),
-  OPENAI_MODEL: z.string().optional(),
 
   // Volume & caps
   AI_MAX_CALLS_PER_RUN: z.coerce.number().default(40),

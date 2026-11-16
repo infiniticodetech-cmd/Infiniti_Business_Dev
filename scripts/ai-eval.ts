@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { analyzeOpportunity } from '../lib/ai/tasks/analyzeOpportunity';
-import { OllamaProvider } from '../lib/ai/ollama.provider';
-import { env } from '../lib/config/env';
+import { resolve } from '../lib/ai/registry';
 
 interface Fixture {
   id: string;
@@ -20,12 +19,11 @@ async function runEvaluation() {
   console.log('======================================================');
   console.log('Infiniti Code Tech — AI Evaluation Benchmark Runner');
   console.log('======================================================');
-  console.log(`Provider: ${env.AI_PROVIDER}`);
-  console.log(`Base URL: ${env.OLLAMA_BASE_URL}`);
-  console.log(`Model:    ${env.OLLAMA_MODEL}`);
+  const { provider, model } = resolve('analyze_opportunity');
+  console.log(`Provider: ${provider.name}`);
+  console.log(`Model:    ${model}`);
 
-  const provider = new OllamaProvider();
-  const health = await provider.healthCheck(env.OLLAMA_MODEL);
+  const health = await provider.healthCheck(model);
   console.log(`Health Check: ${health.ok ? 'OK' : 'FAILED'} — ${health.detail}`);
 
   const fixturesPath = path.resolve(process.cwd(), 'fixtures/eval_fixtures.json');
@@ -33,15 +31,15 @@ async function runEvaluation() {
   console.log(`Loaded ${fixtures.length} fixtures.\n`);
 
   if (!health.ok) {
-    console.warn('\n[NOTE] Ollama server is not currently reachable on localhost:11434.');
+    console.warn(`\n[NOTE] Provider '${provider.name}' is not currently connected / healthy.`);
     console.warn('Generating simulated/dry-run benchmark report for offline verification.');
 
-    const mockReport = `# Infiniti Code Tech — AI Evaluation Report (Day 1)
+    const mockReport = `# Infiniti Code Tech — AI Evaluation Report
 
 - **Date**: ${new Date().toISOString()}
-- **Target Model**: \`${env.OLLAMA_MODEL}\`
-- **Fallback Models**: \`llama3.1:8b\`, \`llama3.2:3b\`
-- **Status**: Ollama server offline during CLI run; schema and prompt validated via Vitest contract tests.
+- **Target Provider**: \`${provider.name}\`
+- **Target Model**: \`${model}\`
+- **Status**: Provider offline during CLI run; schema and prompt validated via Vitest contract tests.
 - **Fixture Count**: ${fixtures.length}
 
 ### Threshold Verification Requirements
@@ -51,7 +49,7 @@ async function runEvaluation() {
 | Category Accuracy | >= 80% | Configured with category prompt hints |
 | Verbatim Quote in Source | >= 90% | Enforced by \`verify.ts\` quotation matcher |
 
-*Run \`npm run ai:eval\` with \`ollama serve\` active to generate live model inference statistics.*
+*Ensure valid credentials / server are configured to generate live model inference statistics.*
 `;
     fs.writeFileSync(path.resolve(process.cwd(), 'docs/EVAL_REPORT.md'), mockReport, 'utf-8');
     console.log('Wrote offline benchmark report to docs/EVAL_REPORT.md');
@@ -122,10 +120,12 @@ async function runEvaluation() {
   const quotePct = ((quoteInSourceCount / fixtures.length) * 100).toFixed(1);
   const avgLatency = (totalLatency / (validJsonCount || 1)).toFixed(0);
 
+  const activeRoute = resolve('analyze_opportunity');
   const report = `# Infiniti Code Tech — AI Evaluation Report (Day 1)
 
 - **Date**: ${new Date().toISOString()}
-- **Active Model**: \`${env.OLLAMA_MODEL}\`
+- **Active Provider**: \`${activeRoute.provider.name}\`
+- **Active Model**: \`${activeRoute.model}\`
 - **Total Fixtures**: ${fixtures.length}
 
 ### Summary Metrics

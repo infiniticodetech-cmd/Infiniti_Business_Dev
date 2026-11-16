@@ -10,7 +10,10 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ai:eval": "tsx scripts/ai-eval.ts"
+    "ai:eval": "tsx scripts/ai-eval.ts",
+    "bots:run": "tsx scripts/run-bots.ts",
+    "compliance:check": "tsx scripts/compliance-check.ts",
+    "pilot:run": "tsx scripts/pilot-run.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

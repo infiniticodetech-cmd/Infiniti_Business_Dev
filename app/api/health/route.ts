@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server';
-import { env } from '@/lib/config/env';
-import { OllamaProvider } from '@/lib/ai/ollama.provider';
+import { resolve } from '@/lib/ai/registry';
 import { supabaseAdmin } from '@/lib/db/admin';
 
 export async function GET() {
   const startTime = Date.now();
   
-  // 1. Check Ollama
-  const ollamaProvider = new OllamaProvider();
-  const ollamaHealth = await ollamaProvider.healthCheck(env.OLLAMA_MODEL);
+  // 1. Check active AI Provider (OpenAI or Ollama dynamically)
+  const { provider, model } = resolve('analyze_opportunity');
+  let aiHealth: { ok: boolean; detail?: string };
+  try {
+    aiHealth = await provider.healthCheck(model);
+  } catch (err) {
+    aiHealth = { ok: false, detail: err instanceof Error ? err.message : String(err) };
+  }
 
   // 2. Check Supabase
   let supabaseOk = false;
@@ -25,7 +29,7 @@ export async function GET() {
     supabaseDetail = err instanceof Error ? err.message : String(err);
   }
 
-  const overallOk = ollamaHealth.ok && supabaseOk;
+  const overallOk = aiHealth.ok && supabaseOk;
 
   return NextResponse.json(
     {
@@ -35,10 +39,10 @@ export async function GET() {
       version: '0.1.0-mvp',
       services: {
         ai: {
-          provider: env.AI_PROVIDER,
-          model: env.OLLAMA_MODEL,
-          healthy: ollamaHealth.ok,
-          detail: ollamaHealth.detail,
+          provider: provider.name,
+          model: model,
+          healthy: aiHealth.ok,
+          detail: aiHealth.detail,
         },
         database: {
           healthy: supabaseOk,
