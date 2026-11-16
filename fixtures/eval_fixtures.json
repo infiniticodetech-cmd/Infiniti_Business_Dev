@@ -1,0 +1,112 @@
+[
+  {
+    "id": "b01_pos_01",
+    "bot_id": 1,
+    "name": "Apex Retail Website Redesign RFP (Fictional)",
+    "url": "https://apexretail.example.com/procurement/rfp-website-2026",
+    "prompt_hint": "Website design, redevelopment, maintenance and CMS migration",
+    "excerpt": "Apex Retail Ltd is publishing an open Request for Proposals (RFP) for the complete redesign and CMS redevelopment of our primary customer-facing e-commerce showcase website. We are seeking an experienced web agency to migrate our legacy WordPress platform to modern Next.js architecture with improved mobile responsiveness and performance. Submissions are due by December 15, 2026. Official inquiries may be directed to tenders@apexretail.example.com.",
+    "expected_category": "website",
+    "expected_signal": "explicit_request",
+    "expected_quote_fragment": "seeking an experienced web agency to migrate our legacy WordPress platform"
+  },
+  {
+    "id": "b01_pos_02",
+    "bot_id": 1,
+    "name": "Global Health NGO New Website Initiative (Fictional)",
+    "url": "https://globalhealthngo.example.org/news/digital-expansion",
+    "prompt_hint": "Website design, redevelopment, maintenance and CMS migration",
+    "excerpt": "To better serve our expanding international health mission, Global Health Initiative announces our 2027 digital campaign. As part of this initiative, our executive board has allocated funding to completely replace our 7-year-old public web portal with an accessible, multilingual corporate website. We invite qualified digital design firms to contact our partnership team at partner@globalhealthngo.example.org.",
+    "expected_category": "website",
+    "expected_signal": "strong_signal",
+    "expected_quote_fragment": "completely replace our 7-year-old public web portal"
+  },
+  {
+    "id": "b02_pos_01",
+    "bot_id": 2,
+    "name": "Urban Transit Mobile App Tender (Fictional)",
+    "url": "https://urbantransit.example.gov/contracts/mobile-app-tender",
+    "prompt_hint": "Mobile app development for iOS, Android or cross-platform (Flutter/React Native)",
+    "excerpt": "Urban Transit Authority hereby invites tenders for the development of the next-generation UrbanPass Mobile Application on iOS and Android platforms. The scope of work encompasses passenger ticketing, real-time vehicle geolocation tracking, and push notification services. Experienced mobile engineering partners must submit technical qualifications before the deadline.",
+    "expected_category": "mobile_app",
+    "expected_signal": "explicit_request",
+    "expected_quote_fragment": "invites tenders for the development of the next-generation UrbanPass Mobile Application"
+  },
+  {
+    "id": "b02_pos_02",
+    "bot_id": 2,
+    "name": "FitLife iOS & Android Companion App (Fictional)",
+    "url": "https://fitlifewellness.example.com/press/companion-app",
+    "prompt_hint": "Mobile app development for iOS, Android or cross-platform (Flutter/React Native)",
+    "excerpt": "FitLife Wellness has greenlit the development of our cross-platform mobile companion app built using Flutter. We plan to connect directly to Bluetooth fitness monitors and stream live workout tracking. We are currently scouting mobile app development agencies to handle end-to-end design, API connection, and App Store submission.",
+    "expected_category": "mobile_app",
+    "expected_signal": "strong_signal",
+    "expected_quote_fragment": "scouting mobile app development agencies to handle end-to-end design"
+  },
+  {
+    "id": "b03_pos_01",
+    "bot_id": 3,
+    "name": "OmniLogistics B2B Portal Development (Fictional)",
+    "url": "https://omnilogistics.example.com/rfp/b2b-portal",
+    "prompt_hint": "Custom software, client/partner portals, internal web tools and platforms",
+    "excerpt": "OmniLogistics International invites bids for the engineering of a bespoke B2B freight booking and client portal. The custom software platform must integrate with our warehouse PostgreSQL database and provide real-time customs document dispatch. Qualified software vendors must demonstrate proven track records in bespoke web applications.",
+    "expected_category": "custom_software",
+    "expected_signal": "explicit_request",
+    "expected_quote_fragment": "invites bids for the engineering of a bespoke B2B freight booking and client portal"
+  },
+  {
+    "id": "b03_pos_02",
+    "bot_id": 3,
+    "name": "Sterling Legal Custom Case Management (Fictional)",
+    "url": "https://sterlinglegal.example.com/news/tech-modernization",
+    "prompt_hint": "Custom software, client/partner portals, internal web tools and platforms",
+    "excerpt": "Sterling Legal Chambers has initiated an internal modernization project to commission a custom legal case management software system to replace our legacy spreadsheets. The firm requires a secure web platform featuring document version control, automated calendaring, and role-based access for legal associates.",
+    "expected_category": "custom_software",
+    "expected_signal": "strong_signal",
+    "expected_quote_fragment": "commission a custom legal case management software system"
+  },
+  {
+    "id": "b04_pos_01",
+    "bot_id": 4,
+    "name": "Beacon Finance AI Chatbot Tender (Fictional)",
+    "url": "https://beaconfinance.example.com/tenders/ai-assistant-2026",
+    "prompt_hint": "AI solutions including chatbots, intelligent assistants, document processing and LLM integration",
+    "excerpt": "Beacon Financial Services issues this tender seeking an artificial intelligence solutions provider to build and integrate an intelligent customer support AI chatbot. The conversational assistant must connect to our banking knowledge base, support multi-turn inquiries, and adhere to strict privacy safeguards.",
+    "expected_category": "ai_solution",
+    "expected_signal": "explicit_request",
+    "expected_quote_fragment": "seeking an artificial intelligence solutions provider to build and integrate an intelligent customer support AI chatbot"
+  },
+  {
+    "id": "b04_pos_02",
+    "bot_id": 4,
+    "name": "MedScan Automated Document Processing AI (Fictional)",
+    "url": "https://medscan.example.org/procurement/ocr-ai-system",
+    "prompt_hint": "AI solutions including chatbots, intelligent assistants, document processing and LLM integration",
+    "excerpt": "MedScan Diagnostics is actively seeking external technology partners specializing in machine learning and OCR document processing. Our facility handles over 10,000 patient admission documents monthly and requires an automated pipeline to extract structured clinical data from scanned intake paperwork.",
+    "expected_category": "ai_solution",
+    "expected_signal": "strong_signal",
+    "expected_quote_fragment": "seeking external technology partners specializing in machine learning and OCR document processing"
+  },
+  {
+    "id": "b05_pos_01",
+    "bot_id": 5,
+    "name": "Pinnacle Logistics Workflow Automation Project (Fictional)",
+    "url": "https://pinnaclelogistics.example.com/rfp/automation-2026",
+    "prompt_hint": "Workflow automation, process optimization, RPA and API/system integrations",
+    "excerpt": "Pinnacle Logistics invites proposals from system integration and workflow automation specialists. The goal of the project is to automate manual invoice matching, dispatch notification webhooks, and ERP synchronization between QuickBooks and our warehouse management system, eliminating hundreds of hours of manual data entry.",
+    "expected_category": "workflow_automation",
+    "expected_signal": "explicit_request",
+    "expected_quote_fragment": "invites proposals from system integration and workflow automation specialists"
+  },
+  {
+    "id": "b05_neg_01",
+    "bot_id": 5,
+    "name": "Clearview Advisory Quarterly Newsletter (Negative / General Tech Mention)",
+    "url": "https://clearviewadvisory.example.com/insights/q3-report",
+    "prompt_hint": "Workflow automation, process optimization, RPA and API/system integrations",
+    "excerpt": "In our quarterly thought leadership report, Clearview Advisory discusses global macroeconomic trends affecting technology firms. We observe that automation and AI continue to transform workplace productivity across modern enterprises worldwide. Leaders should stay informed on technological shifts.",
+    "expected_category": "none",
+    "expected_signal": "weak_signal",
+    "expected_quote_fragment": "automation and AI continue to transform workplace productivity"
+  }
+]
