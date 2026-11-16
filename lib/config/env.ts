@@ -1,21 +1,4 @@
 import { z } from 'zod';
-import fs from 'fs';
-import path from 'path';
-
-// Automatically load .env.local or .env if present
-try {
-  const envLocal = path.resolve(process.cwd(), '.env.local');
-  const envFile = path.resolve(process.cwd(), '.env');
-  if (fs.existsSync(envLocal)) {
-    // @ts-expect-error Node 20+ supports process.loadEnvFile
-    if (typeof process.loadEnvFile === 'function') process.loadEnvFile(envLocal);
-  } else if (fs.existsSync(envFile)) {
-    // @ts-expect-error Node 20+ supports process.loadEnvFile
-    if (typeof process.loadEnvFile === 'function') process.loadEnvFile(envFile);
-  }
-} catch {
-  // Ignore in environments where file access is restricted or already set
-}
 
 const envSchema = z.object({
   // Supabase
