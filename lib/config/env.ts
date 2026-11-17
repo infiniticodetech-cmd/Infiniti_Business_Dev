@@ -6,6 +6,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3Z3p4ZHNxcnViYmp2c2Jkbml4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4MTEzODksImV4cCI6MjExMDM4NzM4OX0.Pk46L2tGy4S-M0_D21L4kvVrUYafi-_9QrmFYch4jTM'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3Z3p4ZHNxcnViYmp2c2Jkbml4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5NDgxMTM4OSwiZXhwIjoyMTEwMzg3Mzg5fQ.AohoABDx6Ud4PkFopJN3ibpWfRfg5sC-Vi8QWQ8KHfA'),
 
+  // External tender discovery
+  BRAVE_SEARCH_API_KEY: z.string().optional(),
   // Pipeline auth
   PIPELINE_API_KEY: z.string().min(16).default('infiniti_secret_pipeline_api_key_2026_mvp'),
 

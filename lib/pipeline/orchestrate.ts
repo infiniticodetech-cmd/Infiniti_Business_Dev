@@ -296,7 +296,18 @@ export async function orchestratePipeline(req: IngestRequest): Promise<IngestRes
         });
         return;
       }
+      const categoryBotMap: Record<string, number> = {
+        website: 1,
+        mobile_app: 2,
+        custom_software: 3,
+        ai_solution: 4,
+        workflow_automation: 5, 
+      };
 
+      const assignedBotId =
+        categoryBotMap[analysis.category] ?? req.bot_id;
+
+      
       const publishResult = await publishOpportunity({
         runId: req.run_id,
         botId: req.bot_id,
