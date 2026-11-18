@@ -3,11 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { discoverDomain, MAX_DISCOVERY_CANDIDATES } from '@/lib/pipeline/discoverDomain';
 import { orchestratePipeline } from '@/lib/pipeline/orchestrate';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { env } from '@/lib/config/env';
-import { Database } from '@/lib/db/types';
-import { supabaseAdmin } from '@/lib/db/admin';
 export const maxDuration = 300;
 
 const requestSchema = z.object({
@@ -36,6 +32,14 @@ const ALL_ICT_KEYWORDS = [
 ];
 
 export async function POST(req: NextRequest) {
+  const authKey = req.headers.get('x-pipeline-key');
+
+  if (!authKey || authKey !== env.PIPELINE_API_KEY) {
+    return NextResponse.json(
+      { error: 'Unauthorized: Invalid or missing x-pipeline-key' },
+      { status: 401 }
+    );
+  }
   let body: unknown;
 
   try {

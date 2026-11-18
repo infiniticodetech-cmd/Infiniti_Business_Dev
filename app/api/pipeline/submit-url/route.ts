@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { orchestratePipeline } from '@/lib/pipeline/orchestrate';
-
+import { env } from '@/lib/config/env';
 const submitSchema = z.object({
   url: z.string().url(),
   bot_id: z.number().int().min(1).max(20).default(1),
@@ -9,6 +9,14 @@ const submitSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const authKey = req.headers.get('x-pipeline-key');
+
+  if (!authKey || authKey !== env.PIPELINE_API_KEY) {
+    return NextResponse.json(
+      { error: 'Unauthorized: Invalid or missing x-pipeline-key' },
+      { status: 401 }
+    );
+  }
   let body: unknown;
   try {
     body = await req.json();

@@ -10,6 +10,7 @@ import { calculateScore } from './score';
 import { publishOpportunity } from './publish';
 import { env } from '../config/env';
 import { OpportunityCategory } from '../db/types';
+import { getBotConfig } from "../bots/registry";
 
 export interface CandidateInput {
   url: string;
@@ -65,7 +66,25 @@ export interface IngestResponse {
 
 export async function orchestratePipeline(req: IngestRequest): Promise<IngestResponse> {
   const limit = pLimit(1); // Enforce sequential processing suited for local LLM hardware
-  const promptHint = req.prompt_hint || 'Technology solution or engineering services';
+  const botConfig = getBotConfig(req.bot_id);
+
+  const promptHint =
+    req.prompt_hint ||
+    botConfig?.promptHint ||
+    "Technology solution or engineering services";
+
+  const includeKeywords =
+    req.include_keywords ?? botConfig?.includeKeywords;
+
+  const excludeKeywords =
+    req.exclude_keywords ?? botConfig?.excludeKeywords;
+
+  const excludeUrlPatterns =
+    req.exclude_url_patterns ?? botConfig?.excludeUrlPatterns;
+
+  const botCategory =
+    req.bot_category ?? botConfig?.category ?? null;
+
   const sourceReliability = req.source_reliability_score ?? 80;
 
   const results: CandidateOutcome[] = [];
@@ -101,14 +120,20 @@ export async function orchestratePipeline(req: IngestRequest): Promise<IngestRes
         });
         return;
       }
-
+      const hasCandidateText = Boolean(cand.text || cand.snippet);
       // 1. Prefilter Stage (D2-PIPE-07)
       const initialText = `${cand.title || ''} ${cand.snippet || ''} ${cand.text || ''}`;
-      const prefilter = prefilterCandidate(canonicalUrl, cand.title || '', initialText, {
-        includeKeywords: req.include_keywords,
-        excludeKeywords: req.exclude_keywords,
-        excludeUrlPatterns: req.exclude_url_patterns,
-      });
+      const prefilter = prefilterCandidate(
+        canonicalUrl,
+        cand.title || "",
+        initialText,
+        {
+          includeKeywords: hasCandidateText ? includeKeywords : undefined,
+          excludeKeywords: hasCandidateText ? excludeKeywords : undefined,
+          excludeUrlPatterns,
+          allowHiringSignals: botConfig?.allowHiringSignals === true,
+        } 
+      );
 
       if (!prefilter.pass) {
         stats.prefiltered_out++;
@@ -157,18 +182,35 @@ export async function orchestratePipeline(req: IngestRequest): Promise<IngestRes
       }
 
       // Extract & Scrub relevance window
-      const extracted = extractPage(pageBody, canonicalUrl, req.include_keywords);
-      if (extracted.hasNoIndex) {
-        stats.rejected++;
-        results.push({
-          url: canonicalUrl,
-          outcome: 'rejected',
-          reason: 'Meta robots noindex specified on page',
-          opportunity_id: null,
-        });
-        return;
+      const extracted = extractPage(
+        pageBody,
+        canonicalUrl,
+        includeKeywords || []
+      );
+      const contentPrefilter = prefilterCandidate(
+      canonicalUrl,
+      extracted.title,
+      extracted.relevanceExcerpt,
+      {
+        includeKeywords,
+        excludeKeywords,
+        excludeUrlPatterns,
+        allowHiringSignals: botConfig?.allowHiringSignals === true,
       }
+    );
 
+    if (!contentPrefilter.pass) {
+      stats.prefiltered_out++;
+
+      results.push({
+        url: canonicalUrl,
+        outcome: "rejected",
+        reason: contentPrefilter.reason || "Content did not match bot requirements",
+      opportunity_id: null,
+    });
+
+  return;
+}
       // Enforce AI Call Caps (D2-AI-03)
       if (aiCallsThisRun >= maxAiCalls) {
         stats.deferred++;
@@ -242,7 +284,7 @@ export async function orchestratePipeline(req: IngestRequest): Promise<IngestRes
         officialWebsite,
         isPiiScrubbed: true,
         aiCategory: analysis.category as OpportunityCategory,
-        botCategory: req.bot_category,
+        botCategory,
       });
 
       if (verification.status === 'failed') {

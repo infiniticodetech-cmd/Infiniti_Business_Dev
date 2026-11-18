@@ -6,8 +6,20 @@ import { Database } from './lib/db/types';
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Public routes
-  if (pathname === '/login' || pathname === '/api/health') {
+  // Public endpoints
+  if (
+    pathname === '/login' ||
+    pathname === '/api/health'
+  ) {
+    return NextResponse.next();
+  }
+
+  // Pipeline endpoints authenticate independently
+  // using the x-pipeline-key header.
+  if (
+    pathname === '/api/pipeline' ||
+    pathname.startsWith('/api/pipeline/')
+  ) {
     return NextResponse.next();
   }
 
@@ -22,7 +34,11 @@ export async function middleware(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
+          setAll(cookiesToSet: Array<{
+            name: string;
+            value: string;
+            options?: any;
+          }>) {
             cookiesToSet.forEach(({ name, value }) => {
               request.cookies.set(name, value);
             });
@@ -54,7 +70,6 @@ export async function middleware(request: NextRequest) {
 
     return response;
   } catch {
-    // Fail closed if authentication cannot be verified.
     if (pathname.startsWith('/api/')) {
       return NextResponse.json(
         { error: 'Authentication service unavailable' },
